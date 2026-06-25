@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us | Campus Placement Management Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .about-section {
+      background-color: white;
+      padding: 3rem;
+      border-radius: 8px;
+      margin-top: 2rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    .about-section h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      border-bottom: 2px solid var(--secondary-color);
+      padding-bottom: 0.5rem;
+      display: inline-block;
+    }
+    .about-section h3 {
+      color: var(--primary-light);
+      margin: 1.5rem 0 0.75rem 0;
+      font-size: 1.3rem;
+    }
+    .about-section p {
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+      font-size: 1.05rem;
+    }
+    .objectives-list {
+      margin-left: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    .objectives-list li {
+      margin-bottom: 0.5rem;
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="navbar">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo-icon">🎓</span> CampusPlacement
+        </a>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html" class="active">About Portal</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+          <span id="nav-auth-actions" style="display: flex; gap: 1rem; align-items: center;">
+            <li><a href="login.html" class="btn-nav-login">Sign In</a></li>
+            <li><a href="register.html" class="btn-nav-register">Register</a></li>
+          </span>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="about-section">
+      <h2>About the Project</h2>
+      <p>The **Campus Placement Management Portal** is a web-based application designed to digitize and streamline placement procedures in academic institutions. In many colleges, placement tracking, job notifications, and application submissions are still managed through manual files, emails, or spread sheets. This portal serves as a unified platform to connect students, recruiters, and placement department heads.</p>
+      
+      <p>This project has been developed as a final year B.Tech Computer Science and Engineering capstone project. It implements a secure role-based access system powered by a modern serverless backend, showcasing student skills in web engineering, database architecture, and security design.</p>
+
+      <h3>System Stakeholders & Roles</h3>
+      <p><strong>1. Placement Officer (Admin):</strong> Manages recruiter accounts, oversees student data, schedules placement drives, publishes announcements, and reviews analytical charts showing placement metrics.</p>
+      <p><strong>2. Recruiters:</strong> Can update company profiles, create job postings with specific criteria (CGPA, skill-sets, department limits), download student resumes, shortlist profiles, and update candidate selection results.</p>
+      <p><strong>3. Students:</strong> Manage placement profiles (CGPA, contact info, resume PDF), browse eligible job postings (with automatic eligibility verification), track active job applications, and view interview notifications.</p>
+
+      <h3>Key Objectives</h3>
+      <ul class="objectives-list">
+        <li><strong>Automation:</strong> Automate job eligibility screening to prevent unqualified applicants.</li>
+        <li><strong>Communication:</strong> Provide real-time alerts for interview schedules and final results.</li>
+        <li><strong>Transparency:</strong> Enable students to track their application status at every single stage.</li>
+        <li><strong>Reporting:</strong> Generate department-wise and company-wise analytics charts for placement performance reviews.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">CampusPlacement<span>Portal</span></div>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="login.html">Sign In</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Campus Placement Portal. Developed as a B.Tech CSE Final Year Project.</p>
+    </div>
+  </footer>
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof auth !== 'undefined') {
+        auth.onAuthStateChanged((user) => {
+          const navAuthActions = document.getElementById('nav-auth-actions');
+          if (user) {
+            db.collection('users').doc(user.uid).get().then(doc => {
+              if (doc.exists) {
+                const role = doc.data().role;
+                let dashLink = '';
+                if (role === 'student') dashLink = 'student/dashboard.html';
+                else if (role === 'recruiter') dashLink = 'recruiter/dashboard.html';
+                else if (role === 'admin') dashLink = 'admin/dashboard.html';
+
+                navAuthActions.innerHTML = `
+                  <li><a href="${dashLink}" class="btn-nav-register">My Dashboard</a></li>
+                  <li><a href="#" onclick="logoutUser()" class="btn-nav-login">Sign Out</a></li>
+                `;
+              }
+            });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "campus-placement-management-portal",
+  "version": "1.0.0",
+  "description": "B.Tech Final Year Academic Project - Campus Placement Portal with Firebase",
+  "main": "index.html",
+  "scripts": {
+    "start": "lite-server"
+  },
+  "devDependencies": {
+    "lite-server": "^2.6.1"
+  },
+  "author": "B.Tech CSE Student",
+  "license": "ISC"
+}

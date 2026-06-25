@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Campus Placement Management Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="navbar">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo-icon">🎓</span> CampusPlacement
+        </a>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Portal</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="login.html" class="btn-nav-login active">Sign In</a></li>
+          <li><a href="register.html" class="btn-nav-register">Register</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Login Area -->
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-title">
+        <h2>Welcome Back</h2>
+        <p>Login to access your placement dashboard</p>
+      </div>
+
+      <!-- Alert Banners -->
+      <div id="auth-error-alert" class="alert alert-danger"></div>
+      <div id="auth-success-alert" class="alert alert-success"></div>
+
+      <!-- Sign In Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="e.g. student@college.edu" required>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <a href="#" class="forgot-password-link" onclick="handleForgotPassword(event)">Forgot Password?</a>
+
+        <button type="submit" class="auth-submit-btn">Sign In</button>
+      </form>
+
+      <!-- Forgot Password View (Hidden by Default) -->
+      <form id="forgotPasswordForm" style="display: none;" onsubmit="handleSendReset(event)">
+        <div class="form-group">
+          <label for="reset-email">Email Address</label>
+          <input type="email" id="reset-email" class="form-control" placeholder="Enter your registered email" required>
+        </div>
+
+        <button type="submit" class="auth-submit-btn">Send Reset Link</button>
+        <div style="text-align: center; margin-top: 1rem;">
+          <a href="#" onclick="toggleForgotPasswordView(false)" style="font-size: 0.9rem; text-decoration: none; color: var(--primary-light);">Back to Sign In</a>
+        </div>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="register.html">Register Here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">CampusPlacement<span>Portal</span></div>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="login.html">Sign In</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Campus Placement Portal. Developed as a B.Tech CSE Final Year Project.</p>
+    </div>
+  </footer>
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    function toggleForgotPasswordView(showReset) {
+      const loginForm = document.getElementById('loginForm');
+      const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+      const title = document.querySelector('.auth-title h2');
+      const desc = document.querySelector('.auth-title p');
+
+      if (showReset) {
+        loginForm.style.display = 'none';
+        forgotPasswordForm.style.display = 'block';
+        title.innerText = "Reset Password";
+        desc.innerText = "We'll send a password recovery link to your inbox";
+      } else {
+        loginForm.style.display = 'block';
+        forgotPasswordForm.style.display = 'none';
+        title.innerText = "Welcome Back";
+        desc.innerText = "Login to access your placement dashboard";
+      }
+      clearAlerts();
+    }
+
+    function handleForgotPassword(e) {
+      e.preventDefault();
+      toggleForgotPasswordView(true);
+    }
+
+    function showAlert(alertId, message) {
+      const alert = document.getElementById(alertId);
+      alert.innerText = message;
+      alert.style.display = 'block';
+    }
+
+    function clearAlerts() {
+      document.getElementById('auth-error-alert').style.display = 'none';
+      document.getElementById('auth-success-alert').style.display = 'none';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      clearAlerts();
+
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Signing In...";
+
+      const result = await loginUser(email, password);
+
+      if (result.success) {
+        // Redirection is handled in auth.js onAuthStateChanged,
+        // but as a fallback, we explicitly check and redirect.
+        showAlert('auth-success-alert', "Login successful! Redirecting...");
+        setTimeout(() => {
+          if (result.role === 'student') window.location.href = 'student/dashboard.html';
+          else if (result.role === 'recruiter') window.location.href = 'recruiter/dashboard.html';
+          else if (result.role === 'admin') window.location.href = 'admin/dashboard.html';
+        }, 800);
+      } else {
+        showAlert('auth-error-alert', result.message || "Failed to log in.");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Sign In";
+      }
+    }
+
+    async function handleSendReset(e) {
+      e.preventDefault();
+      clearAlerts();
+
+      const email = document.getElementById('reset-email').value.trim();
+      const result = await resetPassword(email);
+
+      if (result.success) {
+        showAlert('auth-success-alert', "Password reset email sent! Please check your inbox.");
+        document.getElementById('reset-email').value = '';
+      } else {
+        showAlert('auth-error-alert', result.message || "Failed to send reset link.");
+      }
+    }
+  </script>
+</body>
+</html>

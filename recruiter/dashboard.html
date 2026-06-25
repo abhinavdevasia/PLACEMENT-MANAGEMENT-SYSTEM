@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recruiter Dashboard | Campus Placement Management Portal</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        🏢 <span>RecruiterPortal</span>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a class="sidebar-link active" onclick="switchTab('overview')">
+            <span>🏠</span> <span>Overview</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" onclick="switchTab('company')">
+            <span>🏢</span> <span>Company Profile</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" onclick="switchTab('jobs')">
+            <span>💼</span> <span>Manage Jobs</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" onclick="switchTab('applicants')">
+            <span>👥</span> <span>Applicants</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logoutUser()">
+          <span>🚪</span> <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="main-header">
+        <div class="welcome-info">
+          <h1 id="header-welcome-name">Loading Profile...</h1>
+          <p id="header-company-name">Company: --</p>
+        </div>
+        <div class="header-actions">
+          <!-- Notification Bell -->
+          <div class="notification-bell-container" onclick="toggleNotificationsDropdown(event)">
+            <span class="bell-icon">🔔</span>
+            <span class="bell-badge" id="notif-badge" style="display: none;">0</span>
+            
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notif-dropdown" onclick="event.stopPropagation()">
+              <div class="notifications-header">
+                <span>Recent Notifications</span>
+                <button class="clear-notifications" id="btn-clear-notif">Mark all read</button>
+              </div>
+              <ul class="notifications-list" id="notif-list">
+                <li class="notification-empty">No new notifications</li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Avatar Info -->
+          <div class="user-profile-badge">
+            <div class="user-avatar" id="header-avatar">R</div>
+            <div>
+              <div class="user-profile-name" id="profile-card-name">Recruiter Name</div>
+              <div class="user-profile-role">Recruiter</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Panels -->
+      <div class="dashboard-content">
+        <!-- Overview Panel -->
+        <section id="panel-overview" class="tab-panel active">
+          <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+              <div class="stat-info">
+                <h3>Total Jobs Posted</h3>
+                <p id="stat-jobs-count">0</p>
+              </div>
+              <div class="stat-icon-wrapper">💼</div>
+            </div>
+            <div class="dashboard-stat-card">
+              <div class="stat-info">
+                <h3>Total Applicants</h3>
+                <p id="stat-applicants-count">0</p>
+              </div>
+              <div class="stat-icon-wrapper" style="background-color: #e0f2fe; color: #0284c7;">👥</div>
+            </div>
+            <div class="dashboard-stat-card">
+              <div class="stat-info">
+                <h3>Shortlisted Candidates</h3>
+                <p id="stat-shortlisted-count">0</p>
+              </div>
+              <div class="stat-icon-wrapper" style="background-color: #def7ec; color: var(--success-color);">✔</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+            <!-- Recent Candidates -->
+            <div class="dashboard-card">
+              <div class="card-header">
+                <h2>Recent Candidates Applied</h2>
+                <button class="btn-primary" style="padding:0.4rem 0.8rem; font-size:0.85rem;" onclick="switchTab('applicants')">View All</button>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table" style="font-size: 0.85rem;">
+                    <thead>
+                      <tr>
+                        <th>Candidate Name</th>
+                        <th>Job Position</th>
+                        <th>CGPA</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="overview-recent-applicants-tbody">
+                      <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted);">Loading candidates...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Drives / Announcements -->
+            <div class="dashboard-card">
+              <div class="card-header">
+                <h2>Placement Drives</h2>
+              </div>
+              <div class="card-body" id="overview-drives-list" style="font-size:0.9rem;">
+                <p class="text-muted">Loading placement drives...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Company Profile Panel -->
+        <section id="panel-company" class="tab-panel">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>Company Details</h2>
+            </div>
+            <div class="card-body">
+              <div id="company-alert-success" class="alert alert-success">Company details saved successfully!</div>
+              <div id="company-alert-danger" class="alert alert-danger">Failed to save company profile.</div>
+
+              <form id="companyProfileForm" onsubmit="saveCompanyProfile(event)">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="company-name">Company Name</label>
+                    <input type="text" id="company-name" class="form-control" required readonly>
+                    <small class="text-muted">Please contact Placement Admin to edit company name.</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="company-industry">Industry Type</label>
+                    <input type="text" id="company-industry" class="form-control" placeholder="e.g. IT Services, Consulting, FinTech" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="company-website">Corporate Website</label>
+                    <input type="url" id="company-website" class="form-control" placeholder="e.g. https://www.tcs.com">
+                  </div>
+                  <div class="form-group">
+                    <label for="company-location">Office Headquarters Location</label>
+                    <input type="text" id="company-location" class="form-control" placeholder="e.g. Mumbai, Maharashtra" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="company-desc">About Company / Corporate Description</label>
+                  <textarea id="company-desc" class="form-control" placeholder="Write a short description about company products, domains, and culture..." required></textarea>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" style="width: auto; padding: 0.75rem 2rem;">Save Profile</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- Manage Jobs Panel -->
+        <section id="panel-jobs" class="tab-panel">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>My Job Postings</h2>
+              <button class="btn-primary" style="padding: 0.5rem 1.2rem;" onclick="openJobModal(null)">➕ Post New Job</button>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Job Role</th>
+                      <th>Salary Package</th>
+                      <th>Location</th>
+                      <th>CGPA Criteria</th>
+                      <th>Deadline</th>
+                      <th>Department Limit</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recruiter-jobs-tbody">
+                    <tr>
+                      <td colspan="7" style="text-align: center; color: var(--text-muted);">Loading jobs...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Candidate Applicants Panel -->
+        <section id="panel-applicants" class="tab-panel">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>Candidate Application Manager</h2>
+            </div>
+            <div class="card-body">
+              <!-- Filter / Search Bar -->
+              <div class="filter-bar">
+                <input type="text" id="applicant-search" class="form-control filter-input" placeholder="Search by Candidate Name, Register Number..." oninput="filterApplicantsList()">
+                <select id="applicant-filter-job" class="form-control filter-select" onchange="filterApplicantsList()">
+                  <option value="all">All Jobs</option>
+                </select>
+                <select id="applicant-filter-status" class="form-control filter-select" onchange="filterApplicantsList()">
+                  <option value="all">All Statuses</option>
+                  <option value="Applied">Applied</option>
+                  <option value="Under Review">Under Review</option>
+                  <option value="Shortlisted">Shortlisted</option>
+                  <option value="Interview Scheduled">Interview Scheduled</option>
+                  <option value="Selected">Selected</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Student Name</th>
+                      <th>Dept & CGPA</th>
+                      <th>Applied Position</th>
+                      <th>Submission Date</th>
+                      <th>Status Badge</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recruiter-applicants-tbody">
+                    <tr>
+                      <td colspan="6" style="text-align: center; color: var(--text-muted);">No candidates have applied yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- CRUD Job Posting Modal -->
+  <div class="modal" id="job-post-modal">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 id="job-modal-title">Create Job Posting</h3>
+        <button class="modal-close-btn" onclick="closeModal('job-post-modal')">&times;</button>
+      </div>
+      <form id="jobPostForm" onsubmit="handleJobPostSubmit(event)">
+        <input type="hidden" id="job-modal-id" value="">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="job-title">Job Title / Role</label>
+              <input type="text" id="job-title" class="form-control" placeholder="e.g. Associate Software Engineer" required>
+            </div>
+            <div class="form-group">
+              <label for="job-salary">Salary CTC Package</label>
+              <input type="text" id="job-salary" class="form-control" placeholder="e.g. 6.5 LPA" required>
+            </div>
+            <div class="form-group">
+              <label for="job-location">Job Location</label>
+              <input type="text" id="job-location" class="form-control" placeholder="e.g. Noida / Pune / Hybrid" required>
+            </div>
+            <div class="form-group">
+              <label for="job-deadline">Application Deadline</label>
+              <input type="date" id="job-deadline" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="job-min-cgpa">Minimum Required CGPA</label>
+              <input type="number" id="job-min-cgpa" class="form-control" placeholder="e.g. 7.50" step="0.01" min="0" max="10" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Eligible Departments</label>
+            <div style="display:flex; flex-wrap:wrap; gap: 1rem; margin-top:0.5rem; background:#f7fafc; padding:0.75rem; border-radius:4px; border:1px solid var(--border-color);">
+              <label><input type="checkbox" name="job-depts" value="CSE"> CSE</label>
+              <label><input type="checkbox" name="job-depts" value="IT"> IT</label>
+              <label><input type="checkbox" name="job-depts" value="ECE"> ECE</label>
+              <label><input type="checkbox" name="job-depts" value="EEE"> EEE</label>
+              <label><input type="checkbox" name="job-depts" value="ME"> Mechanical</label>
+              <label><input type="checkbox" name="job-depts" value="CE"> Civil</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="job-skills">Required Technical Skills (Comma separated)</label>
+            <input type="text" id="job-skills" class="form-control" placeholder="e.g. Java, Python, SQL" required>
+          </div>
+
+          <div class="form-group">
+            <label for="job-desc">Job Description & Responsibilities</label>
+            <textarea id="job-desc" class="form-control" style="min-height: 100px;" placeholder="Outline job criteria, roles, training details..." required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('job-post-modal')">Cancel</button>
+          <button type="submit" class="btn-primary" id="job-modal-submit-btn">Save Job</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Candidate Details & Workflow Action Modal -->
+  <div class="modal" id="candidate-action-modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>Review Candidate Application</h3>
+        <button class="modal-close-btn" onclick="closeModal('candidate-action-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="action-app-id" value="">
+        <input type="hidden" id="action-student-id" value="">
+        <input type="hidden" id="action-job-title" value="">
+        
+        <div style="display: grid; grid-template-columns: 80px 1fr; gap: 1rem; margin-bottom: 1.5rem; align-items:center;">
+          <div class="user-avatar" style="width: 70px; height: 70px; font-size: 2rem;" id="modal-candidate-avatar">A</div>
+          <div>
+            <h4 style="font-size: 1.2rem; color: var(--primary-color);" id="modal-candidate-name">Anjali Verma</h4>
+            <p class="text-muted" id="modal-candidate-reg">Reg No: 2022CSE1054</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; background:#f7fafc; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); font-size: 0.9rem;">
+          <div>
+            <span class="text-muted">Branch / Dept</span>
+            <p><strong id="modal-candidate-dept">Computer Science</strong></p>
+          </div>
+          <div>
+            <span class="text-muted">CGPA</span>
+            <p><strong id="modal-candidate-cgpa">8.75</strong></p>
+          </div>
+          <div>
+            <span class="text-muted">Applied Position</span>
+            <p><strong id="modal-candidate-position">UI Developer</strong></p>
+          </div>
+          <div>
+            <span class="text-muted">Candidate Phone</span>
+            <p><strong id="modal-candidate-phone">9876543210</strong></p>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <span class="text-muted" style="font-size: 0.85rem;">Technical Skills Listed</span>
+          <div id="modal-candidate-skills" style="margin-top:0.25rem;">
+            <span class="badge badge-applied">Java</span>
+          </div>
+        </div>
+
+        <!-- Resume Download -->
+        <div style="background-color: #ebf8ff; border: 1px solid #bee3f8; padding: 1rem; border-radius: 6px; display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+          <div>
+            <strong style="color:var(--primary-light); font-size: 0.95rem;">📄 Candidate Resume Document</strong>
+            <p class="text-muted" style="font-size:0.75rem; margin-top:0.1rem;">Review standard university placement resume PDF</p>
+          </div>
+          <a id="modal-candidate-resume-link" href="#" target="_blank" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem; text-decoration:none;">Download Resume</a>
+        </div>
+
+        <!-- Workflow Update Controls -->
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+          <h4 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 1rem;">Update Application State</h4>
+          
+          <div class="form-group">
+            <label for="action-status-select">Current Application Status</label>
+            <select id="action-status-select" class="form-control" onchange="toggleInterviewInputs(this.value)">
+              <option value="Applied">Applied</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Shortlisted">Shortlisted</option>
+              <option value="Interview Scheduled">Interview Scheduled</option>
+              <option value="Selected">Selected</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+          </div>
+
+          <!-- Interview Schedule Panel (Shown conditionally when status is 'Interview Scheduled') -->
+          <div id="interview-schedule-panel" style="display:none; background:#fffaf0; border:1px solid #feebc8; padding:1.25rem; border-radius:6px; margin-bottom: 1.25rem;">
+            <h5 style="color:#dd6b20; font-size:0.95rem; margin-bottom:0.75rem;">📅 Schedule Interview Details</h5>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom:1rem;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="interview-datetime">Date & Time</label>
+                <input type="datetime-local" id="interview-datetime" class="form-control">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label for="interview-location">Location / Link</label>
+                <input type="text" id="interview-location" class="form-control" placeholder="e.g. Google Meet Link / Conference Room B">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="action-feedback">Status Feedback Comments</label>
+            <textarea id="action-feedback" class="form-control" style="min-height: 80px;" placeholder="Provide feedback notes to the student (e.g. 'Your interview is scheduled at room 102. Reach 10 minutes early.')"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('candidate-action-modal')">Close</button>
+        <button class="btn-primary" onclick="submitCandidateAction()">Update Application</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <!-- Script Initializers -->
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/recruiter.js"></script>
+</body>
+</html>

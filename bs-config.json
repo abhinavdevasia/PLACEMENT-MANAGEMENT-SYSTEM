@@ -1,0 +1,23 @@
+{
+  "port": 3000,
+  "server": {
+    "baseDir": "./"
+  },
+  "files": [
+    "*.html",
+    "student/*.html",
+    "recruiter/*.html",
+    "admin/*.html",
+    "css/*.css",
+    "js/*.js"
+  ],
+  "watchOptions": {
+    "ignored": [
+      "node_modules",
+      ".git",
+      "**/*.log"
+    ]
+  },
+  "ghostMode": false,
+  "open": true
+}

@@ -1,0 +1,156 @@
+/* Authentication Form Styling */
+
+.auth-wrapper {
+  min-height: calc(100vh - 70px - 160px); /* Adjust based on navbar/footer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 1rem;
+}
+
+.auth-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 500px;
+  padding: 2.5rem;
+}
+
+.auth-title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-title h2 {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.auth-title p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Auth Alerts */
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: none;
+}
+
+.alert-danger {
+  background-color: #fff5f5;
+  color: var(--danger-color);
+  border: 1px solid #fed7d7;
+}
+
+.alert-success {
+  background-color: #f0fff4;
+  color: var(--success-color);
+  border: 1px solid #c6f6d5;
+}
+
+.alert-info {
+  background-color: #ebf8ff;
+  color: var(--primary-light);
+  border: 1px solid #bee3f8;
+}
+
+/* Role Selector Tabs */
+.role-selector {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.role-tab-btn {
+  flex: 1;
+  background-color: #edf2f7;
+  color: var(--text-muted);
+  border: none;
+  padding: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.role-tab-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.role-tab-btn:not(.active):hover {
+  background-color: #e2e8f0;
+}
+
+/* Conditional Forms inside Register */
+.conditional-fields {
+  display: none;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.conditional-fields.active {
+  display: block;
+}
+
+.auth-submit-btn {
+  width: 100%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.auth-submit-btn:hover {
+  background-color: var(--primary-light);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  color: var(--primary-light);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.forgot-password-link {
+  display: block;
+  text-align: right;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.forgot-password-link:hover {
+  color: var(--primary-light);
+  text-decoration: underline;
+}

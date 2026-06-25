@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Campus Placement Management Portal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="navbar">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo-icon">🎓</span> CampusPlacement
+        </a>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Portal</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="login.html" class="btn-nav-login">Sign In</a></li>
+          <li><a href="register.html" class="btn-nav-register active">Register</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Register Form Card -->
+  <div class="auth-wrapper" style="padding: 2rem 1rem;">
+    <div class="auth-card" style="max-width: 600px;">
+      <div class="auth-title">
+        <h2>Create Account</h2>
+        <p>Choose your portal role to register</p>
+      </div>
+
+      <!-- Alert Banners -->
+      <div id="auth-error-alert" class="alert alert-danger"></div>
+      <div id="auth-success-alert" class="alert alert-success"></div>
+
+      <!-- Role Tabs Toggle -->
+      <div class="role-selector">
+        <button type="button" class="role-tab-btn active" id="btn-tab-student" onclick="toggleRole('student')">Student Portal</button>
+        <button type="button" class="role-tab-btn" id="btn-tab-recruiter" onclick="toggleRole('recruiter')">Recruiter Portal</button>
+      </div>
+
+      <!-- Registration Form -->
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <!-- Hidden input to store role selection -->
+        <input type="hidden" id="register-role" value="student">
+
+        <!-- Universal Fields -->
+        <div class="form-group">
+          <label for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="form-control" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-email">Email Address</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="e.g. name@college.edu or company@mail.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-phone">Phone Number</label>
+          <input type="tel" id="reg-phone" class="form-control" placeholder="e.g. 9876543210" pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number" required>
+        </div>
+
+        <!-- Student-Specific Fields -->
+        <div id="student-fields" class="conditional-fields active">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="reg-regno">Register Number</label>
+              <input type="text" id="reg-regno" class="form-control" placeholder="e.g. 2022CSE1054">
+            </div>
+            <div class="form-group">
+              <label for="reg-cgpa">Current CGPA</label>
+              <input type="number" id="reg-cgpa" class="form-control" placeholder="e.g. 8.45" step="0.01" min="0" max="10">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label for="reg-dept">Department</label>
+              <select id="reg-dept" class="form-control">
+                <option value="">Select Dept</option>
+                <option value="CSE">CSE</option>
+                <option value="IT">IT</option>
+                <option value="ECE">ECE</option>
+                <option value="EEE">EEE</option>
+                <option value="ME">Mechanical</option>
+                <option value="CE">Civil</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reg-year">Current Year</label>
+              <select id="reg-year" class="form-control">
+                <option value="">Select Year</option>
+                <option value="1st">1st Year</option>
+                <option value="2nd">2nd Year</option>
+                <option value="3rd">3rd Year</option>
+                <option value="4th">4th Year</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-skills">Technical Skills (Comma separated)</label>
+            <input type="text" id="reg-skills" class="form-control" placeholder="e.g. Java, Python, SQL, HTML">
+          </div>
+        </div>
+
+        <!-- Recruiter-Specific Fields -->
+        <div id="recruiter-fields" class="conditional-fields">
+          <div class="form-group">
+            <label for="reg-company">Company Name</label>
+            <input type="text" id="reg-company" class="form-control" placeholder="e.g. Tata Consultancy Services">
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" class="form-control" placeholder="Minimum 6 characters" minlength="6" required>
+        </div>
+
+        <button type="submit" class="auth-submit-btn" style="margin-top: 1rem;">Submit Registration</button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Login Here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">CampusPlacement<span>Portal</span></div>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="login.html">Sign In</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Campus Placement Portal. Developed as a B.Tech CSE Final Year Project.</p>
+    </div>
+  </footer>
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    function toggleRole(role) {
+      const studentTab = document.getElementById('btn-tab-student');
+      const recruiterTab = document.getElementById('btn-tab-recruiter');
+      const studentFields = document.getElementById('student-fields');
+      const recruiterFields = document.getElementById('recruiter-fields');
+      const roleInput = document.getElementById('register-role');
+
+      roleInput.value = role;
+      clearAlerts();
+
+      if (role === 'student') {
+        studentTab.classList.add('active');
+        recruiterTab.classList.remove('active');
+        studentFields.classList.add('active');
+        recruiterFields.classList.remove('active');
+        
+        // Add required fields
+        document.getElementById('reg-regno').required = true;
+        document.getElementById('reg-cgpa').required = true;
+        document.getElementById('reg-dept').required = true;
+        document.getElementById('reg-year').required = true;
+        document.getElementById('reg-company').required = false;
+      } else {
+        studentTab.classList.remove('active');
+        recruiterTab.classList.add('active');
+        studentFields.classList.remove('active');
+        recruiterFields.classList.add('active');
+
+        // Remove/Add required fields
+        document.getElementById('reg-regno').required = false;
+        document.getElementById('reg-cgpa').required = false;
+        document.getElementById('reg-dept').required = false;
+        document.getElementById('reg-year').required = false;
+        document.getElementById('reg-company').required = true;
+      }
+    }
+
+    // Set student as default required fields on start
+    document.addEventListener('DOMContentLoaded', () => {
+      toggleRole('student');
+    });
+
+    function showAlert(alertId, message) {
+      const alert = document.getElementById(alertId);
+      alert.innerText = message;
+      alert.style.display = 'block';
+    }
+
+    function clearAlerts() {
+      document.getElementById('auth-error-alert').style.display = 'none';
+      document.getElementById('auth-success-alert').style.display = 'none';
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      clearAlerts();
+
+      const role = document.getElementById('register-role').value;
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const phone = document.getElementById('reg-phone').value.trim();
+      const password = document.getElementById('reg-password').value;
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Processing Registration...";
+
+      let result;
+
+      if (role === 'student') {
+        const registerNumber = document.getElementById('reg-regno').value.trim();
+        const cgpa = document.getElementById('reg-cgpa').value;
+        const department = document.getElementById('reg-dept').value;
+        const year = document.getElementById('reg-year').value;
+        const skills = document.getElementById('reg-skills').value;
+
+        // Custom validation check
+        if (parseFloat(cgpa) < 0 || parseFloat(cgpa) > 10) {
+          showAlert('auth-error-alert', "CGPA must be between 0.0 and 10.0");
+          submitBtn.disabled = false;
+          submitBtn.innerText = "Submit Registration";
+          return;
+        }
+
+        result = await registerStudent(name, registerNumber, email, phone, department, year, cgpa, skills, password);
+      } else {
+        const companyName = document.getElementById('reg-company').value.trim();
+        result = await registerRecruiter(name, email, phone, companyName, password);
+      }
+
+      if (result.success) {
+        if (role === 'recruiter') {
+          showAlert('auth-success-alert', "Registration successful! Your recruiter account is pending approval from the Placement Officer. Please check back later.");
+          // Clear form
+          document.getElementById('registerForm').reset();
+          toggleRole('student');
+        } else {
+          showAlert('auth-success-alert', "Registration successful! Redirecting to student dashboard...");
+          // Redirection handled in auth.js via onAuthStateChanged
+        }
+      } else {
+        showAlert('auth-error-alert', result.message || "Registration failed.");
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Submit Registration";
+      }
+    }
+  </script>
+</body>
+</html>

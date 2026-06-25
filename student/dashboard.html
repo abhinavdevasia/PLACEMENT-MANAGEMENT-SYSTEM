@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | Campus Placement Management Portal</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        🎓 <span>CampusPortal</span>
+      </div>
+      <ul class="sidebar-menu">
+        <li>
+          <a class="sidebar-link active" onclick="switchTab('overview')">
+            <span>🏠</span> <span>Overview</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" onclick="switchTab('jobs')">
+            <span>💼</span> <span>Job Portal</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" onclick="switchTab('applications')">
+            <span>📁</span> <span>My Applications</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" onclick="switchTab('interviews')">
+            <span>📅</span> <span>Interviews</span>
+          </a>
+        </li>
+        <li>
+          <a class="sidebar-link" onclick="switchTab('profile')">
+            <span>👤</span> <span>My Profile</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logoutUser()">
+          <span>🚪</span> <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="main-header">
+        <div class="welcome-info">
+          <h1 id="header-welcome-name">Loading Profile...</h1>
+          <p id="header-student-reg">Register No: --</p>
+        </div>
+        <div class="header-actions">
+          <!-- Notification Bell -->
+          <div class="notification-bell-container" onclick="toggleNotificationsDropdown(event)">
+            <span class="bell-icon">🔔</span>
+            <span class="bell-badge" id="notif-badge" style="display: none;">0</span>
+            
+            <!-- Notifications Dropdown -->
+            <div class="notifications-dropdown" id="notif-dropdown" onclick="event.stopPropagation()">
+              <div class="notifications-header">
+                <span>Recent Notifications</span>
+                <button class="clear-notifications" id="btn-clear-notif">Mark all read</button>
+              </div>
+              <ul class="notifications-list" id="notif-list">
+                <li class="notification-empty">No new notifications</li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- Avatar Info -->
+          <div class="user-profile-badge">
+            <div class="user-avatar" id="header-avatar">S</div>
+            <div>
+              <div class="user-profile-name" id="profile-card-name">Student User</div>
+              <div class="user-profile-role">Student</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Panels -->
+      <div class="dashboard-content">
+        <!-- Overview Panel -->
+        <section id="panel-overview" class="tab-panel active">
+          <div class="dashboard-stats-grid">
+            <div class="dashboard-stat-card">
+              <div class="stat-info">
+                <h3>Applied Jobs</h3>
+                <p id="stat-applied-count">0</p>
+              </div>
+              <div class="stat-icon-wrapper">📁</div>
+            </div>
+            <div class="dashboard-stat-card">
+              <div class="stat-info">
+                <h3>Shortlisted</h3>
+                <p id="stat-shortlisted-count">0</p>
+              </div>
+              <div class="stat-icon-wrapper" style="background-color: #def7ec; color: var(--success-color);">✔</div>
+            </div>
+            <div class="dashboard-stat-card">
+              <div class="stat-info">
+                <h3>Interviews</h3>
+                <p id="stat-interviews-count">0</p>
+              </div>
+              <div class="stat-icon-wrapper" style="background-color: #e0f2fe; color: #0284c7;">📅</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+            <!-- Announcements -->
+            <div class="dashboard-card">
+              <div class="card-header">
+                <h2>Placement Drive Announcements</h2>
+              </div>
+              <div class="card-body" id="overview-drives-list">
+                <p class="text-muted">Loading placement drives...</p>
+              </div>
+            </div>
+            <!-- Quick Profile Overview -->
+            <div class="dashboard-card">
+              <div class="card-header">
+                <h2>Profile Overview</h2>
+              </div>
+              <div class="card-body">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                  <div class="user-avatar" id="overview-avatar" style="width: 70px; height: 70px; font-size: 2rem; margin: 0 auto 0.5rem auto;">S</div>
+                  <h3 id="overview-profile-name">Student Name</h3>
+                  <p class="text-muted" id="overview-profile-dept">CSE - 4th Year</p>
+                </div>
+                <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; font-size: 0.9rem;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom: 0.5rem;">
+                    <span class="text-muted">CGPA</span>
+                    <strong id="overview-profile-cgpa">--</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom: 0.5rem;">
+                    <span class="text-muted">Skills Count</span>
+                    <strong id="overview-profile-skills-count">0</strong>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom: 0.5rem;">
+                    <span class="text-muted">Resume PDF</span>
+                    <strong id="overview-profile-resume-status" style="color: var(--danger-color);">Not Uploaded</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Job Portal Panel -->
+        <section id="panel-jobs" class="tab-panel">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>Browse Job Openings</h2>
+            </div>
+            <div class="card-body">
+              <!-- Filter Bar -->
+              <div class="filter-bar">
+                <input type="text" id="job-search" class="form-control filter-input" placeholder="Search by Job Title or Company..." oninput="filterJobsList()">
+                <select id="job-filter-eligibility" class="form-control filter-select" onchange="filterJobsList()">
+                  <option value="all">All Eligibility</option>
+                  <option value="eligible">Eligible Only</option>
+                  <option value="ineligible">Ineligible Only</option>
+                </select>
+                <select id="job-filter-dept" class="form-control filter-select" onchange="filterJobsList()">
+                  <option value="all">All Departments</option>
+                  <option value="CSE">CSE</option>
+                  <option value="IT">IT</option>
+                  <option value="ECE">ECE</option>
+                  <option value="EEE">EEE</option>
+                  <option value="ME">Mechanical</option>
+                </select>
+              </div>
+
+              <!-- Jobs Table/List -->
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Job Details</th>
+                      <th>Salary</th>
+                      <th>Eligibility Criteria</th>
+                      <th>Deadline</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="student-jobs-tbody">
+                    <tr>
+                      <td colspan="6" style="text-align: center; color: var(--text-muted);">Loading active job postings...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Applications History Panel -->
+        <section id="panel-applications" class="tab-panel">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>My Applications</h2>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Company</th>
+                      <th>Job Profile</th>
+                      <th>Applied Date</th>
+                      <th>Application Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="student-applications-tbody">
+                    <tr>
+                      <td colspan="5" style="text-align: center; color: var(--text-muted);">No applications submitted yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Scheduled Interviews Panel -->
+        <section id="panel-interviews" class="tab-panel">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>Interview Schedule</h2>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Company</th>
+                      <th>Job Role</th>
+                      <th>Date & Time</th>
+                      <th>Location / Meeting Link</th>
+                      <th>Interview Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="student-interviews-tbody">
+                    <tr>
+                      <td colspan="5" style="text-align: center; color: var(--text-muted);">No interviews scheduled yet.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Profile Panel -->
+        <section id="panel-profile" class="tab-panel">
+          <div class="dashboard-card">
+            <div class="card-header">
+              <h2>My Academic Profile</h2>
+            </div>
+            <div class="card-body">
+              <div id="profile-alert-success" class="alert alert-success">Profile updated successfully!</div>
+              <div id="profile-alert-danger" class="alert alert-danger">Failed to save profile.</div>
+
+              <form id="studentProfileForm" onsubmit="saveStudentProfile(event)">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="profile-name">Full Name</label>
+                    <input type="text" id="profile-name" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="profile-regno">Register Number</label>
+                    <input type="text" id="profile-regno" class="form-control" readonly>
+                    <small class="text-muted">Register number cannot be changed.</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="profile-email">Email Address</label>
+                    <input type="email" id="profile-email" class="form-control" readonly>
+                    <small class="text-muted">Email address cannot be changed.</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="profile-phone">Phone Number</label>
+                    <input type="tel" id="profile-phone" class="form-control" required pattern="[0-9]{10}">
+                  </div>
+                  <div class="form-group">
+                    <label for="profile-dept">Department</label>
+                    <select id="profile-dept" class="form-control" required>
+                      <option value="CSE">CSE</option>
+                      <option value="IT">IT</option>
+                      <option value="ECE">ECE</option>
+                      <option value="EEE">EEE</option>
+                      <option value="ME">Mechanical</option>
+                      <option value="CE">Civil</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="profile-year">Academic Year</label>
+                    <select id="profile-year" class="form-control" required>
+                      <option value="1st">1st Year</option>
+                      <option value="2nd">2nd Year</option>
+                      <option value="3rd">3rd Year</option>
+                      <option value="4th">4th Year</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="profile-cgpa">Current Cumulative CGPA</label>
+                    <input type="number" id="profile-cgpa" class="form-control" required step="0.01" min="0" max="10">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="profile-skills">Technical Skills (Comma separated)</label>
+                  <input type="text" id="profile-skills" class="form-control" placeholder="e.g. Java, SQL, React, Python">
+                </div>
+
+                <!-- Resume File Upload -->
+                <div style="background-color: var(--bg-color); border: 1px dashed var(--border-color); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                  <h3 style="font-size: 1rem; color: var(--primary-color); margin-bottom: 0.5rem;">Resume Management</h3>
+                  <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">Upload your academic resume in PDF format (Max 2MB). Recruiters will review this document.</p>
+                  
+                  <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+                    <input type="file" id="profile-resume-file" accept=".pdf" style="font-family: inherit;">
+                    <button type="button" class="btn-primary" style="padding: 0.5rem 1rem;" onclick="uploadResume()">Upload PDF</button>
+                    
+                    <div id="resume-download-link-container" style="display: none;">
+                      <a id="btn-resume-download" href="#" target="_blank" class="badge badge-eligible" style="text-decoration: none; padding: 0.5rem 1rem; display: inline-block;">📄 View Uploaded Resume</a>
+                      <span id="uploaded-resume-name" class="text-muted" style="font-size:0.8rem; margin-left: 0.5rem;"></span>
+                    </div>
+                  </div>
+                  <div id="resume-upload-status" class="text-muted" style="margin-top: 0.5rem; font-size: 0.85rem;"></div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" style="width: auto; padding: 0.75rem 2rem;">Save Changes</button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- Job Details Modal -->
+  <div class="modal" id="job-details-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-job-title">Job Title</h3>
+        <button class="modal-close-btn" onclick="closeModal('job-details-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+          <div>
+            <span class="text-muted" style="font-size: 0.8rem;">Company Name</span>
+            <p><strong id="modal-job-company">Tata Consultancy Services</strong></p>
+          </div>
+          <div>
+            <span class="text-muted" style="font-size: 0.8rem;">Salary Package</span>
+            <p><strong id="modal-job-salary">8.5 LPA</strong></p>
+          </div>
+          <div>
+            <span class="text-muted" style="font-size: 0.8rem;">Job Location</span>
+            <p><strong id="modal-job-location">Bangalore, India</strong></p>
+          </div>
+          <div>
+            <span class="text-muted" style="font-size: 0.8rem;">Deadline Date</span>
+            <p><strong id="modal-job-deadline" style="color: var(--danger-color);">2026-07-15</strong></p>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <span class="text-muted" style="font-size: 0.8rem;">Job Description</span>
+          <p id="modal-job-desc" style="white-space: pre-wrap; font-size: 0.95rem; margin-top: 0.25rem;">Detailed job description here...</p>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <span class="text-muted" style="font-size: 0.8rem;">Eligible Branches</span>
+          <div style="margin-top: 0.25rem;" id="modal-job-depts">
+            <span class="badge badge-applied">CSE</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <span class="text-muted" style="font-size: 0.8rem;">Required Skill Sets</span>
+          <div style="margin-top: 0.25rem;" id="modal-job-skills">
+            <span class="badge badge-applied">Java</span>
+          </div>
+        </div>
+
+        <!-- Eligibility Banner -->
+        <div id="modal-job-eligibility-banner" class="alert" style="display: block; margin-bottom: 0;">
+          Checking eligibility...
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('job-details-modal')">Close</button>
+        <button id="modal-btn-apply" class="btn-primary">Apply Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tracker / Status Progress Modal -->
+  <div class="modal" id="app-progress-modal">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3>Application Status Tracker</h3>
+        <button class="modal-close-btn" onclick="closeModal('app-progress-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4 id="tracker-job-title" style="color: var(--primary-color);">Systems Engineer</h4>
+        <p id="tracker-company" class="text-muted" style="margin-bottom: 1.5rem;">Tata Consultancy Services</p>
+
+        <!-- Pipeline Workflow Steps -->
+        <div class="status-tracker">
+          <div class="tracker-step" id="step-applied">
+            <div class="tracker-node">1</div>
+            <div class="tracker-label">Applied</div>
+          </div>
+          <div class="tracker-step" id="step-review">
+            <div class="tracker-node">2</div>
+            <div class="tracker-label">Under Review</div>
+          </div>
+          <div class="tracker-step" id="step-shortlist">
+            <div class="tracker-node">3</div>
+            <div class="tracker-label">Shortlisted</div>
+          </div>
+          <div class="tracker-step" id="step-interview">
+            <div class="tracker-node">4</div>
+            <div class="tracker-label">Interview</div>
+          </div>
+          <div class="tracker-step" id="step-result">
+            <div class="tracker-node">5</div>
+            <div class="tracker-label" id="step-result-label">Result</div>
+          </div>
+        </div>
+
+        <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px; margin-top: 1.5rem;">
+          <strong>Official Status Feedback:</strong>
+          <p id="tracker-feedback" style="margin-top: 0.25rem; font-size: 0.95rem;">Your application is successfully submitted. Recruiter will update feedback here.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="closeModal('app-progress-modal')">Close Tracker</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+  <!-- Script Initializers -->
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/eligibility.js"></script>
+  <script src="../js/notifications.js"></script>
+  <script src="../js/student.js"></script>
+</body>
+</html>

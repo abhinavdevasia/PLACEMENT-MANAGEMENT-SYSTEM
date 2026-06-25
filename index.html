@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Placement Management Portal</title>
+  <meta name="description" content="Centralized placement portal connecting students, recruiters, and placement officers to automate placement drives, application review and tracking.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="navbar">
+      <div class="logo">
+        <a href="index.html">
+          <span class="logo-icon">🎓</span> CampusPlacement
+        </a>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="about.html">About Portal</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+          <!-- Auth actions will be injected dynamically -->
+          <span id="nav-auth-actions" style="display: flex; gap: 1rem; align-items: center;">
+            <li><a href="login.html" class="btn-nav-login">Sign In</a></li>
+            <li><a href="register.html" class="btn-nav-register">Register</a></li>
+          </span>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Streamline Your College Placement Journey</h1>
+      <p>A centralized, automated hub connecting ambitious students, top recruiters, and placement officers. Apply, schedule interviews, and monitor statistics in real-time.</p>
+      <div class="hero-buttons">
+        <a href="login.html" class="btn-primary">Student Portal</a>
+        <a href="login.html" class="btn-secondary">Recruiter Portal</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Statistics -->
+  <section class="stats-grid">
+    <div class="stat-card">
+      <h3 id="stat-students">1200+</h3>
+      <p>Registered Students</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="stat-companies">45+</h3>
+      <p>Partner Companies</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="stat-offers">320+</h3>
+      <p>Offers Placed (This Year)</p>
+    </div>
+    <div class="stat-card">
+      <h3 id="stat-percent">88%</h3>
+      <p>Placement Percentage</p>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="container features-section">
+    <div class="section-title">
+      <h2>Portal Features</h2>
+      <p>Optimizing and tracking placements from resume upload to final selections.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">👤</div>
+        <h3>Eligibility verification</h3>
+        <p>Smart filters check students' CGPA, skills, and department against recruiter requirements before allowing applications.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📁</div>
+        <h3>Resume Management</h3>
+        <p>Students upload their PDF resumes to Firebase, making them instantly accessible for recruiters to view and download.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Interview Scheduling</h3>
+        <p>Recruiters can schedule interviews directly through the portal, notifying selected students in real time.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Reports and Analytics</h3>
+        <p>Placement officers get automated dashboards tracking placement percentages, department distributions, and drive reports.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">CampusPlacement<span>Portal</span></div>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="login.html">Sign In</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Campus Placement Portal. Developed as a B.Tech CSE Final Year Project.</p>
+    </div>
+  </footer>
+
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+  <!-- App configurations -->
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // Dynamically adjust nav links and load system-wide numbers on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof auth !== 'undefined') {
+        auth.onAuthStateChanged((user) => {
+          const navAuthActions = document.getElementById('nav-auth-actions');
+          if (user) {
+            db.collection('users').doc(user.uid).get().then(doc => {
+              if (doc.exists) {
+                const role = doc.data().role;
+                const pathPrefix = window.location.pathname.includes('/student/') ? '../' : './';
+                let dashLink = '';
+                if (role === 'student') dashLink = 'student/dashboard.html';
+                else if (role === 'recruiter') dashLink = 'recruiter/dashboard.html';
+                else if (role === 'admin') dashLink = 'admin/dashboard.html';
+
+                navAuthActions.innerHTML = `
+                  <li><a href="${dashLink}" class="btn-nav-register">My Dashboard</a></li>
+                  <li><a href="#" onclick="logoutUser()" class="btn-nav-login">Sign Out</a></li>
+                `;
+              }
+            });
+          }
+        });
+      }
+
+      // Fetch dynamic analytics counts to show on landing page
+      loadStatsCounter();
+    });
+
+    async function loadStatsCounter() {
+      try {
+        if (typeof db !== 'undefined') {
+          // Count Students
+          const studentsSnap = await db.collection('students').get();
+          if (!studentsSnap.empty) {
+            document.getElementById('stat-students').innerText = studentsSnap.docs.length + "+";
+          }
+          // Count Recruiters / Companies
+          const recruitersSnap = await db.collection('companies').get();
+          if (!recruitersSnap.empty) {
+            document.getElementById('stat-companies').innerText = recruitersSnap.docs.length + "+";
+          }
+          // Selected Count & Percentage
+          const appsSnap = await db.collection('applications').get();
+          if (!appsSnap.empty) {
+            let totalApps = appsSnap.docs.length;
+            let selectedCount = 0;
+            const uniqueStudentsSelected = new Set();
+            const uniqueStudentsApplied = new Set();
+
+            appsSnap.forEach(doc => {
+              const app = doc.data();
+              uniqueStudentsApplied.add(app.studentId);
+              if (app.status === 'Selected') {
+                selectedCount++;
+                uniqueStudentsSelected.add(app.studentId);
+              }
+            });
+
+            document.getElementById('stat-offers').innerText = selectedCount + "+";
+            if (uniqueStudentsApplied.size > 0) {
+              const placementPercentage = Math.round((uniqueStudentsSelected.size / uniqueStudentsApplied.size) * 100);
+              document.getElementById('stat-percent').innerText = placementPercentage + "%";
+            }
+          }
+        }
+      } catch (err) {
+        console.log("Using default pre-seed stats because Firebase has placeholder key.", err);
+      }
+    }
+  </script>
+</body>
+</html>
